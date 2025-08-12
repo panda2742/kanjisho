@@ -10,12 +10,12 @@
 #                                                                              #
 # **************************************************************************** #
 
-override NAME	:=	btc
+override NAME	:=	kanjisho
 
 override SOURCE_DIR		:=	src/
 override INCLUDE_DIR	:=	include/
-INCLUDES				:=	BitcoinExchange
-SOURCES					:=	BitcoinExchange main
+INCLUDES				:=	$(addprefix exceptions/, AException AlreadyInitialized FileNotValid NotInitialized) Kanji Kanjisho
+SOURCES					:=	Kanjisho main
 override SOURCE			:=	$(addprefix $(SOURCE_DIR), $(addsuffix .cpp, $(SOURCES)))
 override INCLUDE		:=	$(addprefix $(INCLUDE_DIR), $(addsuffix .hpp, $(INCLUDES)))
 
@@ -24,9 +24,9 @@ override OBJ	:=	$(patsubst $(SOURCE_DIR)%.cpp, $(BUILD_DIR)%.o, $(SOURCE))
 override DEPS	:=	$(patsubst %.o, %.d, $(OBJ))
 override DIRS	:=	$(sort $(dir $(NAME) $(OBJ) $(DEPS)))
 
-CPPFLAGS	:=	-Wall -Wextra -Werror -MD -Wshadow --std=c++98 -g3
+CPPFLAGS	:=	-Wall -Wextra -Werror -MD -Wshadow --std=c++23 -g3
 MAKEFLAGS	:=	--no-print-directory
-GCC			:=	c++
+GCC			:=	g++
 RM			:=	rm -rf
 VG			:=	valgrind
 VGFLAGS		:=	--leak-check=full --show-leak-kinds=all --track-origins=yes --show-mismatched-frees=yes --track-fds=yes --trace-children=yes
@@ -63,13 +63,13 @@ run:
 	@clear
 	@$(MAKE) bonus
 	@clear
-	@./$(NAME) input.csv
+	@./$(NAME)
 
 .PHONY: vg
 vg:
 	@clear
 	@$(MAKE) bonus
 	@clear
-	$(VG) $(VGFLAGS) ./$(NAME) input.csv
+	$(VG) $(VGFLAGS) ./$(NAME)
 
 -include $(DEPS)
