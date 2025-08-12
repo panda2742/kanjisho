@@ -8,17 +8,16 @@
  */
 typedef struct Kanji
 {
-	/**
-	 * The character itself in UTF8 coding.
-	 */
-	const std::string	literal;
-	/**
-	 * The cp_value contains the codepoint of the character in a particular
-	 * standard. The standard will be identified in the cp_type attribute.
-	 */
-	const uint8_t	grade;
-	const uint8_t	stroke_count;
-
+	std::string	literal;
+	struct s_codepoint
+	{
+		std::unord<>;
+	};
+	radical;
+	misc;
+	dic_number;
+	query_code;
+	reading_meaning;
 }	Kanji_t;
 
 #endif
