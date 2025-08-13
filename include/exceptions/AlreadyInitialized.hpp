@@ -5,7 +5,7 @@
 class AlreadyInitialized : public AException
 {
 	public:
-		AlreadyInitialized(void) : AException("The program has already been initialized.") {}
+		AlreadyInitialized(void) : AException("The database has already been initialized.") {}
 	
 		const char	*type(void) const noexcept override { return "AlreadyInitialized"; }
 };
