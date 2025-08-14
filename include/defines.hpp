@@ -1,5 +1,6 @@
 #pragma once
 
+#define C_WHITE "\e[38;2;255;255;255m"
 #define C_RED "\e[38;2;255;0;0m"
 #define C_ORANGE "\e[38;2;255;127;0m"
 #define C_YELLOW "\e[38;2;255;255;0m"

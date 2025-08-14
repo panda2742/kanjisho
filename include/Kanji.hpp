@@ -40,7 +40,12 @@ typedef struct Kanji
 	friend ostream &	operator<<(ostream & os, const struct Kanji & k)
 	{
 
-		os << "\n\t" C_BOLD << std::string(k.literal.begin(), k.literal.end()) << C_RESET "\n";
+		os << "\n\t" C_WHITE << std::string(k.literal.begin(), k.literal.end()) << C_RESET;
+
+		os << C_GREY "\tU+"
+              << std::hex << std::uppercase << std::setw(4) << std::setfill('0')
+              << static_cast<unsigned int>(k.unicode)
+              << std::dec << C_RESET "\n";
 
 		os << "Kun\t";
 		if (!k.kun_readings.empty())
@@ -51,7 +56,7 @@ typedef struct Kanji
 				if (i + 1 < k.kun_readings.size()) os << ", ";
 			}
 		}
-		else os << "(empty)";
+		else os << C_GREY "(empty)" C_RESET;
     	os << "\n";
 
 		os << "On\t";
@@ -59,14 +64,26 @@ typedef struct Kanji
 		{
 			for (size_t i = 0; i < k.on_readings.size(); ++i)
 			{
-				os << C_DARK_BLUE << std::string(k.on_readings[i].begin(), k.on_readings[i].end()) << C_RESET;
+				os << C_DARK_GREEN << std::string(k.on_readings[i].begin(), k.on_readings[i].end()) << C_RESET;
 				if (i + 1 < k.on_readings.size()) os << ", ";
 			}
 		}
-		else os << "(empty)";
+		else os << C_GREY "(empty)" C_RESET;
     	os << "\n";
 
-		os << "Defs:";
+		os << "Nanori\t";
+		if (!k.name_readings.empty())
+		{
+			for (size_t i = 0; i < k.name_readings.size(); ++i)
+			{
+				os << C_MAGENTA << std::string(k.name_readings[i].begin(), k.name_readings[i].end()) << C_RESET;
+				if (i + 1 < k.name_readings.size()) os << ", ";
+			}
+		}
+		else os << C_GREY "(empty)" C_RESET;
+    	os << "\n";
+
+		os << "Defs";
 		for (auto &[lang, defs] : k.meanings)
 		{
 			os << "\t" C_GREY << lang << ": " C_RESET;
@@ -77,14 +94,32 @@ typedef struct Kanji
 			}
 			os << "\n";
 		}
-		os << "\n";
 
 		vector<string>	tag_content;
 
 		if (k.former_jlpt)
-			tag_content.push_back("JLPT: " + to_string(k.former_jlpt));
+			tag_content.push_back("JLPT: N" + to_string(k.former_jlpt));
 		if (k.grade)
-			tag_content.push_back("Grade: " + to_string(k.grade));
+		{
+			switch (k.grade)
+			{
+				case 1: case 2: case 3: case 4: case 5: case 6:
+					tag_content.push_back("Grade: Kyouiku (" + to_string(k.grade) + ")");
+					break;
+				case 8:
+					tag_content.push_back("Grade: Jouyou (" + to_string(k.grade) + ")");
+					break;
+				case 9:
+					tag_content.push_back("Grade: Jinmeiyou (" + to_string(k.grade) + ")");
+					break;
+				case 10:
+					tag_content.push_back("Grade: Jinmeiyou, Jouyou var. (" + to_string(k.grade) + ")");
+					break;
+				default:
+					tag_content.push_back("Grade: undefined classification (" + to_string(k.grade) + ")");
+					break;
+			}
+		}
 		if (k.freq)
 			tag_content.push_back("Freq: #" + to_string(k.freq));
 

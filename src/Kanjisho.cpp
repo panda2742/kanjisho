@@ -77,8 +77,8 @@ void	Kanjisho::DisplayPrompt(void)
 		throw NotInitialized();
 	
 	const vector<Kanji_t>	db = GetDatabase();
-	for (const Kanji_t & t : db)
-		cout << t;
+	for (size_t	i = 0; i < 4; i++)
+		cout << db[i];
 }
 
 void	Kanjisho::_ParseKanji(ifstream & xml)
