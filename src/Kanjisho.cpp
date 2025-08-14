@@ -75,6 +75,10 @@ void	Kanjisho::DisplayPrompt(void)
 {
 	if (!_has_been_initiated)
 		throw NotInitialized();
+	
+	const vector<Kanji_t>	db = GetDatabase();
+	for (const Kanji_t & t : db)
+		cout << t;
 }
 
 void	Kanjisho::_ParseKanji(ifstream & xml)
@@ -86,16 +90,94 @@ void	Kanjisho::_ParseKanji(ifstream & xml)
 	{
 		if (line.starts_with("<literal>"))
 		{
-			size_t	start = line.find(">"),
-					end   = line.find("</literal>");
-
+			size_t start = line.find(">");
+			size_t end   = line.find("</literal>");
 			if (start != string::npos && end != string::npos && end > start)
 				kanji.literal.assign(line.begin() + start + 1, line.begin() + end);
 		}
-		if (line.starts_with("</character>"))
+		else if (line.starts_with("<stroke_count>"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</stroke_count>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.stroke_count = atoi(string(line.begin() + start + 1, line.begin() + end).c_str());
+		}
+		else if (line.starts_with("<cp_value cp_type=\"ucs\">"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</cp_value>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.unicode = static_cast<char32_t>(strtoul(string(line.begin() + start + 1, line.begin() + end).c_str(), nullptr, 16));
+		}
+		else if (line.starts_with("<grade>"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</grade>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.grade = atoi(string(line.begin() + start + 1, line.begin() + end).c_str());
+		}
+		else if (line.starts_with("<jlpt>"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</jlpt>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.former_jlpt = atoi(string(line.begin() + start + 1, line.begin() + end).c_str());
+		}
+		else if (line.starts_with("<freq>"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</freq>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.freq = atoi(string(line.begin() + start + 1, line.begin() + end).c_str());
+		}
+		else if (line.starts_with("<reading r_type=\"ja_kun\">"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</reading>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.kun_readings.emplace_back(line.begin() + start + 1, line.begin() + end);
+		}
+		else if (line.starts_with("<reading r_type=\"ja_on\">"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</reading>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.on_readings.emplace_back(line.begin() + start + 1, line.begin() + end);
+		}
+		else if (line.starts_with("<nanori>"))
+		{
+			size_t start = line.find(">");
+			size_t end   = line.find("</nanori>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.name_readings.emplace_back(line.begin() + start + 1, line.begin() + end);
+		}
+		else if (line.starts_with("<meaning"))
+		{
+			// Récupération langue (si présente)
+			string lang = "en"; // défaut anglais
+			size_t attrPos = line.find("m_lang=");
+			if (attrPos != string::npos)
+			{
+				size_t q1 = line.find("\"", attrPos);
+				size_t q2 = line.find("\"", q1 + 1);
+				if (q1 != string::npos && q2 != string::npos)
+					lang.assign(line.begin() + q1 + 1, line.begin() + q2);
+			}
+			// Récupération texte
+			size_t start = line.find(">");
+			size_t end   = line.find("</meaning>");
+			if (start != string::npos && end != string::npos && end > start)
+				kanji.meanings[lang].emplace_back(line.begin() + start + 1, line.begin() + end);
+		}
+		else if (line.starts_with("</character>"))
 		{
 			_db.push_back(kanji);
-			return ;
+			return;
 		}
 	}
+}
+
+const vector<Kanji_t> &	Kanjisho::GetDatabase(void) const
+{
+	return _db;
 }

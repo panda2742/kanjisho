@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Kanji.hpp"
+#include <ostream>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -20,7 +21,10 @@ class Kanjisho
 		void	ReadXML(void);
 		void	DisplayPrompt(void);
 
-		static void	LoadingSpinner(stop_token);
+		const vector<Kanji_t> &	GetDatabase(void) const;
+
+		static void		LoadingSpinner(stop_token);
+		static size_t	U8StrLen(const u8string & str);
 	private:
 		Kanjisho(void) = default;
 
@@ -39,4 +43,12 @@ class Kanjisho
 		unordered_map<unsigned short int, vector<const Kanji_t *>>	_index_freq;
 
 		void	_ParseKanji(ifstream & xml);
+
+		friend ostream &	operator<<(ostream & os, const Kanjisho kj)
+		{
+			(void)kj;
+			// for (const Kanji_t & k : kj._db)
+			// 	os << k << endl;
+			return os;
+		}
 };

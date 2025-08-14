@@ -14,8 +14,8 @@ override NAME	:=	kanjisho
 
 override SOURCE_DIR		:=	src/
 override INCLUDE_DIR	:=	include/
-INCLUDES				:=	$(addprefix exceptions/, AException AlreadyInitialized FileNotValid NotInitialized) Kanji Kanjisho
-SOURCES					:=	Kanjisho main
+INCLUDES				:=	$(addprefix exceptions/, AException AlreadyInitialized FileNotValid NotInitialized) defines Kanji Kanjisho utils
+SOURCES					:=	$(addprefix utils/, U8StrLen) Kanjisho main
 override SOURCE			:=	$(addprefix $(SOURCE_DIR), $(addsuffix .cpp, $(SOURCES)))
 override INCLUDE		:=	$(addprefix $(INCLUDE_DIR), $(addsuffix .hpp, $(INCLUDES)))
 

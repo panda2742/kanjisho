@@ -11,6 +11,8 @@
 #define C_MAGENTA "\e[38;2;139;0;255m"
 #define C_PURPLE "\e[38;2;148;0;211m"
 
+#define C_BOLD    "\033[1m"
 #define C_GREY "\e[38;2;130;130;130m"
 #define C_RESET "\e[0m"
 #define C_CLEARLN "\033[2K\r"
+#define C_BG_GRAY "\033[48;5;240m"
